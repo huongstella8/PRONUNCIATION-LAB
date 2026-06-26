@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Pronunciation Trainer — Huong Stella Paradigm</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,Arial,sans-serif;background:#F1F5F9;color:#1e293b;min-height:100vh}
+:root{
+  --navy:#003087;--navyD:#001d5e;
+  --cyan:#00AEEF;--cyanL:#e5f7fd;
+  --gold:#F59E0B;--green:#16A34A;--red:#DC2626;
+  --slate:#475569;--muted:#94A3B8;
+  --light:#F1F5F9;--white:#FFFFFF;--border:#CBD5E1;
+}
+
+/* ── HEADER ── */
+#header{background:var(--navy);position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,.25)}
+.header-top{display:flex;align-items:center;gap:10px;padding:12px 20px 10px;border-bottom:1px solid rgba(255,255,255,.1);flex-wrap:wrap}
+.brand-sub{font-size:9px;color:var(--cyan);font-weight:800;letter-spacing:3px;text-transform:uppercase;line-height:1}
+.brand-name{font-size:14px;color:#fff;font-weight:800;line-height:1.2}
+.header-sub{padding:8px 20px;display:flex;align-items:center;gap:10px}
+.header-sub-title{color:#fff;font-weight:700;font-size:14px}
+.header-sub-ctx{color:#93c5fd;font-size:12px}
+#back-btn{background:rgba(255,255,255,.1);border:none;color:#fff;cursor:pointer;border-radius:8px;padding:6px 12px;font-size:13px;font-weight:700;display:none;align-items:center;gap:4px}
+#back-btn.show{display:flex}
+
+/* ── USER INFO ── */
+#user-display{margin-left:auto;display:flex;align-items:center;gap:8px;cursor:pointer}
+#user-display .uname{color:#fff;font-size:12px;font-weight:700}
+#user-display .uemail{color:#93c5fd;font-size:10px}
+#user-edit-btn{background:rgba(255,255,255,.15);border:none;color:#93c5fd;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer}
+#user-form{display:none;align-items:center;gap:6px;margin-left:auto;flex-wrap:wrap}
+#user-form.show{display:flex}
+#user-display.hide{display:none}
+.user-input{padding:5px 10px;border-radius:6px;border:1.5px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:#fff;font-size:12px;outline:none}
+.user-input::placeholder{color:#93c5fd}
+.user-save-btn{background:var(--cyan);border:none;color:#fff;border-radius:6px;padding:5px 10px;font-weight:700;font-size:12px;cursor:pointer}
+
+/* ── LEVEL PILL ── */
+.pill{display:inline-block;border-radius:99px;padding:3px 11px;font-size:11px;font-weight:800;letter-spacing:.5px;border:1.5px solid}
+
+/* ── BUTTONS ── */
+.btn-primary{background:var(--navy);color:#fff;border:none;border-radius:10px;padding:13px 22px;font-weight:700;font-size:14px;cursor:pointer;transition:opacity .15s}
+.btn-primary:hover{opacity:.9}
+.btn-outline{background:#fff;color:var(--navy);border:2px solid var(--navy);border-radius:10px;padding:13px 22px;font-weight:700;font-size:14px;cursor:pointer}
+.btn-grad{border:none;border-radius:12px;padding:15px;font-size:16px;font-weight:800;cursor:pointer;color:#fff;width:100%}
+.btn-grad:hover{opacity:.92}
+.audio-btn{background:#fff;color:var(--cyan);border:2px solid var(--cyan);border-radius:8px;padding:7px 16px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .15s}
+.audio-btn.small{border-radius:99px;padding:3px 12px;font-size:12px}
+.audio-btn.playing{background:var(--cyan);color:#fff}
+.audio-btn.ghost{background:transparent;color:var(--slate);border:none;font-size:12px;padding:3px 12px;cursor:pointer}
+
+/* ── SCREENS ── */
+.screen{display:none}
+.screen.active{display:block}
+
+/* ── HOME ── */
+.home-hero{background:linear-gradient(120deg,var(--navyD),var(--navy) 70%,var(--cyan));border-radius:16px;padding:28px;margin-bottom:28px;color:#fff}
+.home-hero h1{font-size:24px;font-weight:900;line-height:1.2;margin:6px 0 10px}
+.home-hero p{color:#bfdbfe;font-size:13px;line-height:1.7;max-width:520px}
+.hero-stats{margin-top:16px;background:rgba(255,255,255,.12);border-radius:10px;padding:12px 16px;display:inline-flex;gap:24px}
+.hero-stat-n{font-size:22px;font-weight:900}
+.hero-stat-l{font-size:11px;color:#bfdbfe}
+.level-label{display:inline-block;color:#fff;border-radius:8px;padding:5px 14px;font-weight:800;font-size:13px;margin-right:8px}
+.level-desc{color:var(--slate);font-size:13px;font-weight:500}
+.level-section{margin-bottom:28px}
+.level-header{display:flex;align-items:center;margin-bottom:14px}
+.topic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.topic-card{background:#fff;border:2px solid var(--border);border-radius:14px;padding:18px;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.topic-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.1)}
+.topic-card.done{border-color:var(--card-colour,var(--cyan))}
+.topic-icon{font-size:30px;margin-bottom:8px}
+.topic-title{font-size:16px;font-weight:800;color:var(--navy);margin-bottom:4px}
+.topic-ctx{font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5}
+.topic-footer{display:flex;justify-content:space-between;align-items:center}
+.topic-count{font-size:11px;color:var(--muted)}
+.topic-start{font-size:11px;border-radius:99px;padding:2px 10px;font-weight:700}
+.topic-done{font-size:11px;font-weight:700}
+.progress-track{background:var(--border);border-radius:99px;height:6px;overflow:hidden;margin-top:10px}
+.progress-fill{height:100%;border-radius:99px;transition:width .6s ease}
+.summary-box{background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:22px;margin-top:4px}
+
+/* ── STEP INDICATORS ── */
+.step-row{display:flex;gap:8px;margin-bottom:20px}
+.step-item{flex:1;padding:8px 4px;border-radius:8px;text-align:center;font-size:12px;font-weight:700;border:1.5px solid var(--border);color:var(--muted);background:#fff}
+.step-item.active{color:#fff}
+.step-item.done{border-color:inherit}
+
+/* ── EX PROGRESS ── */
+.ex-progress{display:flex;gap:6px;margin-bottom:20px;align-items:center}
+.ex-dot{flex:1;height:6px;border-radius:99px;background:var(--border);cursor:pointer;transition:background .2s}
+.ex-count{font-size:12px;color:var(--muted);white-space:nowrap;margin-left:4px}
+
+/* ── CARDS ── */
+.white-card{background:#fff;border-radius:16px;padding:24px;border:1.5px solid var(--border);margin-bottom:16px}
+.type-badge{display:inline-block;border-radius:8px;padding:5px 14px;font-size:12px;font-weight:800;color:#fff;margin-bottom:16px}
+.instruction{font-size:14px;color:var(--slate);line-height:1.7;margin-bottom:20px}
+
+/* ── LISTEN-REPEAT ── */
+.word-row{display:flex;align-items:center;gap:12px;background:var(--light);border-radius:10px;padding:11px 14px;border:1px solid var(--border);margin-bottom:8px}
+.word-emoji{font-size:26px;flex-shrink:0}
+.word-text{font-weight:900;color:var(--navy);font-size:17px}
+.word-ph{font-size:12px;color:var(--cyan);font-family:'Courier New',monospace}
+.word-btns{margin-left:auto;display:flex;gap:6px}
+
+/* ── VOCAB CARDS ── */
+.vocab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px;margin-bottom:24px}
+.vocab-card{background:#fff;border-radius:14px;padding:18px;border:1.5px solid var(--border);display:flex;gap:14px;align-items:flex-start}
+.vocab-emoji{font-size:34px;line-height:1}
+.vocab-info{flex:1;min-width:0}
+.vocab-word{font-size:19px;font-weight:900;color:var(--navy)}
+.vocab-ph{font-size:12px;color:var(--cyan);font-family:'Courier New',monospace;font-weight:700;margin-left:8px}
+.vocab-def{font-size:12px;color:var(--slate);margin:4px 0 12px;line-height:1.5}
+.vocab-btns{display:flex;gap:6px;flex-wrap:wrap}
+
+/* ── FILL BLANK ── */
+.blank-item{border-radius:12px;padding:14px 16px;border:1.5px solid var(--border);margin-bottom:10px;transition:all .2s}
+.blank-item.correct{background:#f0fdf4;border-color:#86efac}
+.blank-item.wrong{background:#fef2f2;border-color:#fca5a5}
+.blank-sentence{font-size:14px;color:var(--navy);line-height:1.7;margin-bottom:10px}
+.blank-select{padding:3px 8px;border-radius:6px;border:2px solid var(--cyan);font-size:13px;color:var(--navy);font-weight:700;background:#fff;cursor:pointer;margin:0 4px}
+.blank-answer{display:inline-block;font-weight:900;border-bottom:2px solid;padding:0 3px;margin:0 2px}
+.blank-answer.correct{color:var(--green);border-color:var(--green)}
+.blank-answer.wrong{color:var(--red);border-color:var(--red)}
+.blank-feedback{font-size:12px;font-weight:700}
+.blank-feedback.correct{color:var(--green)}
+.blank-feedback.wrong{color:var(--red)}
+.check-btn{background:var(--navy);color:#fff;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;width:100%;margin-top:4px}
+.check-btn:disabled{background:#e2e8f0;color:var(--muted);cursor:not-allowed}
+.score-box{background:var(--cyanL);border-radius:12px;padding:16px;border:1px solid rgba(0,174,239,.25);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:8px}
+.score-n{font-size:22px;font-weight:900;color:var(--navy)}
+.score-sub{font-size:12px;color:var(--slate)}
+.retry-btn{background:#fff;color:var(--navy);border:2px solid var(--navy);border-radius:8px;padding:8px 18px;font-weight:700;font-size:13px;cursor:pointer}
+
+/* ── SHADOWING ── */
+.shadow-line{background:var(--light);border-radius:12px;padding:18px;border:1px solid var(--border);margin-bottom:12px}
+.shadow-text{font-size:15px;color:var(--navy);font-weight:600;margin-bottom:8px;line-height:1.65}
+.shadow-note{font-size:12px;color:var(--muted);margin-bottom:12px;font-style:italic}
+.shadow-btns{display:flex;gap:8px;flex-wrap:wrap}
+.shadow-tip{background:#fffbeb;border:1.5px solid #fcd34d;border-radius:12px;padding:16px;margin-top:4px}
+.shadow-tip-title{font-weight:800;color:#92400e;font-size:13px;margin-bottom:8px}
+.shadow-tip ol{padding-left:18px;color:var(--slate);font-size:13px;line-height:1.9}
+.shadow-all{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+
+/* ── DIALOGUE ── */
+.dialogue-line{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px}
+.speaker-tag{border-radius:8px;padding:5px 12px;font-size:11px;font-weight:700;white-space:nowrap;margin-top:6px;min-width:60px;text-align:center;color:#fff}
+.dialogue-bubble{flex:1;background:var(--light);border-radius:10px;padding:12px 14px;border:1px solid var(--border)}
+.dialogue-text{font-size:14px;color:var(--navy);line-height:1.65;margin-bottom:10px}
+.dialogue-btns{display:flex;gap:6px}
+.dialogue-challenge{background:#f0fdf4;border:1.5px solid #86efac;border-radius:10px;padding:14px;font-size:13px;color:#14532d;margin-top:8px}
+.dialogue-all{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+
+/* ── RULE SCREEN ── */
+.rule-card{background:#fff;border-radius:16px;padding:26px;margin-bottom:20px}
+.rule-eyebrow{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.rule-title{font-size:20px;color:var(--navy);line-height:1.3;margin-bottom:14px}
+.rule-body{color:var(--slate);font-size:14px;line-height:1.75;margin-bottom:20px}
+.rule-targets{background:var(--cyanL);border-radius:10px;padding:16px;margin-bottom:14px}
+.rule-targets-title{font-size:12px;font-weight:800;color:var(--navy);margin-bottom:10px}
+.target-item{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.target-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.target-text{font-size:13px;color:var(--slate)}
+.avoid-box{background:#fef2f2;border:1.5px solid #fca5a5;border-radius:10px;padding:14px}
+.avoid-label{font-size:12px;font-weight:800;color:var(--red)}
+.avoid-text{font-size:13px;color:#7f1d1d}
+.context-card{background:#fff;border-radius:14px;padding:20px;margin-bottom:20px;border:1.5px solid var(--border)}
+.context-label{font-size:12px;font-weight:700;color:var(--slate);margin-bottom:8px}
+.context-text{font-size:14px;color:var(--navy);font-style:italic;margin-bottom:12px;line-height:1.6}
+
+/* ── NAV BUTTONS ── */
+.nav-row{display:flex;gap:10px;margin-top:8px}
+
+/* ── RESULT SCREEN ── */
+.result-hero{border-radius:18px;padding:28px;text-align:center;margin-bottom:22px;color:#fff}
+.result-medal{font-size:56px;margin-bottom:8px}
+.result-name{font-size:24px;font-weight:900;margin-bottom:6px}
+.result-topic{font-size:14px;color:#bfdbfe;margin-bottom:20px}
+.result-pct{font-size:44px;font-weight:900}
+.result-sub{font-size:14px;color:#bfdbfe;margin-bottom:16px}
+.result-bar-track{background:rgba(255,255,255,.2);border-radius:99px;height:10px;overflow:hidden}
+.result-bar-fill{height:100%;background:#fff;border-radius:99px;transition:width .8s ease}
+.result-detail{background:#fff;border-radius:14px;padding:20px;margin-bottom:14px;border:1.5px solid var(--border)}
+.result-detail-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.result-pair{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.result-pair:last-child{border-bottom:none}
+.result-pair-icon{font-size:16px}
+.result-pair-sent{font-size:13px;color:var(--slate);line-height:1.5}
+.result-pair-err{font-size:12px;color:var(--red);margin-top:2px}
+.recap-card{background:#fff;border-radius:14px;padding:20px;margin-bottom:20px;border:1.5px solid var(--border)}
+.recap-title{font-weight:800;color:var(--navy);margin-bottom:10px}
+.recap-body{color:var(--slate);font-size:13px;line-height:1.7}
+.result-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+
+/* ── HINT BOX ── */
+.hint-box{background:linear-gradient(135deg,var(--cyanL),#fff);border-radius:12px;padding:14px 18px;margin-bottom:20px;border:1px solid rgba(0,174,239,.2);font-size:13px;color:var(--slate)}
+.hint-box b{color:var(--navy)}
+
+/* ── CONTAINER ── */
+.container{max-width:880px;margin:0 auto;padding:28px 20px 48px}
+.container-md{max-width:720px;margin:0 auto;padding:28px 20px 48px}
+.container-sm{max-width:680px;margin:0 auto;padding:28px 20px 48px}
+
+/* ── PDF MSG ── */
+.pdf-msg{font-size:13px;margin-top:10px;text-align:center}
+
+/* ── MISC ── */
+.all-words-bar{background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:16px;margin-bottom:20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.all-words-label{font-weight:700;color:var(--navy);font-size:13px}
+.all-words-sub{color:var(--muted);font-size:12px}
+
+@media(max-width:600px){
+  .topic-grid{grid-template-columns:1fr}
+  .vocab-grid{grid-template-columns:1fr}
+  .result-actions{flex-direction:column}
+  .nav-row{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════
+     HEADER
+══════════════════════════════════════════════════════ -->
+<div id="header">
+  <div class="header-top">
+    <button id="back-btn" onclick="handleBack()">← <span id="back-label">Back</span></button>
+    <div>
+      <div class="brand-sub">Huong Stella Paradigm</div>
+      <div class="brand-name">Pronunciation Trainer</div>
+    </div>
+    <!-- User display (click to edit) -->
+    <div id="user-display" onclick="toggleUserForm()">
+      <div style="text-align:right">
+        <div class="uname" id="hdr-name">Add your name</div>
+        <div class="uemail" id="hdr-email">Add email for PDF report</div>
+      </div>
+      <button class="user-edit-btn" onclick="event.stopPropagation();toggleUserForm()">✏️ Edit</button>
+    </div>
+    <div id="user-form">
+      <input class="user-input" id="inp-name"  placeholder="Your name"  style="width:130px" oninput="updateUserPreview()"/>
+      <input class="user-input" id="inp-email" placeholder="Email" type="email" style="width:160px" oninput="updateUserPreview()"/>
+      <button class="user-save-btn" onclick="saveUser()">Save</button>
+    </div>
+  </div>
+  <div class="header-sub" id="header-sub" style="display:none">
+    <span class="header-sub-title" id="hdr-topic-title"></span>
+    <span class="header-sub-ctx"  id="hdr-level-pill"></span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     SCREENS
+══════════════════════════════════════════════════════ -->
+
+<!-- HOME -->
+<div id="screen-home" class="screen active">
+  <div class="container">
+    <div class="home-hero">
+      <div style="font-size:13px;font-weight:700;color:var(--cyan);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">Daily Pronunciation Practice</div>
+      <h1>Train your British English<br/>accent — one topic at a time.</h1>
+      <p>Each session targets the most common pronunciation errors for Vietnamese learners — final consonants, linking, stress, weak forms, thought groups, and intonation. Work through levels in order, or jump to yours.</p>
+      <div id="hero-stats" style="display:none" class="hero-stats">
+        <div><div class="hero-stat-n" id="stat-pct">0%</div><div class="hero-stat-l">Overall Score</div></div>
+        <div><div class="hero-stat-n" id="stat-ex">0</div><div class="hero-stat-l">Exercises Done</div></div>
+      </div>
+    </div>
+    <div id="level-sections"></div>
+    <div id="summary-section" style="display:none" class="summary-box">
+      <div style="font-weight:800;color:var(--navy);margin-bottom:6px">📊 Session Summary</div>
+      <div id="summary-text" style="color:var(--slate);font-size:13px;margin-bottom:14px"></div>
+      <button class="btn-primary" id="global-pdf-btn" onclick="exportPDF(null,null)">📄 Export Full Session Report (PDF)</button>
+      <div id="global-pdf-msg" class="pdf-msg" style="color:var(--green)"></div>
+    </div>
+  </div>
+</div>
+
+<!-- RULE -->
+<div id="screen-rule" class="screen">
+  <div class="container-md">
+    <div class="step-row" id="step-row-rule">
+      <div class="step-item active" id="step-r0">📋 Rule</div>
+      <div class="step-item" id="step-r1">🔤 Words</div>
+      <div class="step-item" id="step-r2">✏️ Exercises</div>
+    </div>
+    <div id="rule-content"></div>
+    <button class="btn-grad" id="rule-next-btn" onclick="goToWords()" style="margin-top:4px">Next: Learn Key Vocabulary →</button>
+  </div>
+</div>
+
+<!-- WORDS -->
+<div id="screen-words" class="screen">
+  <div class="container-md">
+    <div class="step-row">
+      <div class="step-item done" style="border-color:var(--lv-colour)">📋 Rule</div>
+      <div class="step-item active" id="step-w1">🔤 Words</div>
+      <div class="step-item" id="step-w2">✏️ Exercises</div>
+    </div>
+    <div class="hint-box">
+      <b>💡 How to use this section:</b> Click 🔊 Listen for full-speed British pronunciation. Click 🐢 Slow for a slower version to hear each sound clearly. All definitions are British English.
+    </div>
+    <div id="vocab-content" class="vocab-grid"></div>
+    <div class="all-words-bar">
+      <div>
+        <div class="all-words-label">🔊 Hear all words in sequence</div>
+        <div class="all-words-sub">Good for building word memory before exercises.</div>
+      </div>
+      <button class="audio-btn" id="play-all-btn" onclick="playAllWords()">Play All Words</button>
+      <button class="audio-btn ghost" onclick="playAllWordsSlow()">🐢 Slow</button>
+    </div>
+    <button class="btn-grad" id="words-next-btn" onclick="goToExercises()" style="margin-top:4px">Next: Begin Exercises →</button>
+  </div>
+</div>
+
+<!-- EXERCISES -->
+<div id="screen-exercises" class="screen">
+  <div class="container-md">
+    <div class="step-row">
+      <div class="step-item done" style="border-color:var(--lv-colour)">📋 Rule</div>
+      <div class="step-item done" style="border-color:var(--lv-colour)">🔤 Words</div>
+      <div class="step-item active">✏️ Exercises</div>
+    </div>
+    <div class="ex-progress" id="ex-progress"></div>
+    <div id="exercise-content"></div>
+    <div class="nav-row" id="ex-nav">
+      <button id="prev-ex-btn" class="btn-outline" onclick="prevExercise()" style="display:none;flex:1">← Previous</button>
+      <button id="next-ex-btn" onclick="nextExercise()" style="flex:2;border:none;border-radius:12px;padding:13px;font-size:14px;font-weight:800;cursor:pointer;color:#fff">Next Exercise →</button>
+    </div>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="screen-result" class="screen">
+  <div class="container-sm">
+    <div id="result-content"></div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   DATA
+═══════════════════════════════════════════════════════ */
+const LEVELS=[
+  {id:"A2B1",label:"A2 → B1",  badge:"#00AEEF",desc:"Foundation & Everyday English"},
+  {id:"B1B2",label:"B1⁺ → B2", badge:"#0057A8",desc:"Independent Communicator"},
+  {id:"B2C1",label:"B2⁺ → C1", badge:"#003087",desc:"Advanced & Professional"},
+  {id:"C1C2",label:"C1⁺ → C2", badge:"#7C3AED",desc:"Near-Native Fluency"},
+];
+const TOPICS={
+  A2B1:[
+    {id:"t1",icon:"☕",title:"Daily Routines",
+     context:"A friendly chat between two neighbours in the morning.",
+     rule:{title:"Final Consonant Sounds — Don't Drop Them!",
+       body:"Vietnamese learners often drop final consonants — saying 'wor' instead of 'work', or 'nex' instead of 'next'. In British English, every final consonant is released clearly. The trick: gently tap your tongue, lips, or teeth at the end of each word, but do NOT add a vowel sound after it.",
+       targets:["final /k/ → work, look, back","final /t/ → next, left, asked","final /d/ → cold, called, old","final /l/ → school, call, well"],
+       avoid:"Adding '-uh' after final consonants — 'work-uh' ❌  →  'work' ✓"},
+     words:[
+       {w:"work",  ph:"/wɜːk/",  def:"Your job or employment",                emoji:"💼"},
+       {w:"next",  ph:"/nekst/", def:"Immediately following this one",          emoji:"➡️"},
+       {w:"left",  ph:"/left/",  def:"Remaining; or the direction opposite right",emoji:"👈"},
+       {w:"asked", ph:"/ɑːskt/", def:"Past tense of 'ask' — requested information",emoji:"🙋"},
+       {w:"school",ph:"/skuːl/", def:"A place where children learn",            emoji:"🏫"},
+       {w:"cold",  ph:"/kəʊld/", def:"Low in temperature",                      emoji:"🥶"},
+     ],
+     exercises:[
+       {type:"listen-repeat",instruction:"Listen to each word at normal speed, then at slow speed. Repeat THREE times, making the final consonant sharp and clear.",items:["work","next","left","asked","school","cold"]},
+       {type:"fill-blank",instruction:"Choose the correct word to complete each sentence.",pairs:[
+         {sentence:"She goes to ______ from Monday to Friday.",     answer:"school",options:["school","work","cold"]},
+         {sentence:"Please turn ______ at the traffic lights.",      answer:"left",  options:["left","next","work"]},
+         {sentence:"The weather today is absolutely ______.",        answer:"cold",  options:["cold","next","asked"]},
+         {sentence:"He ______ me what time the meeting started.",    answer:"asked", options:["asked","left","school"]},
+       ]},
+       {type:"shadowing",instruction:"Shadow these sentences. Focus on the final consonants — they must be heard clearly.",lines:[
+         {text:"I walked to work and it was absolutely cold.",  note:"Final sounds: walk[t], wor[k], col[d]"},
+         {text:"She asked her teacher what to read next.",       note:"Final sounds: ask[t→asked], rea[d], nex[t]"},
+         {text:"He left school early and went straight home.",   note:"Final sounds: lef[t], schoo[l], wen[t]"},
+       ]},
+       {type:"dialogue",instruction:"Read the dialogue aloud. Take both roles — press the line button to hear the model pronunciation first.",lines:[
+         {speaker:"A",text:"Good morning! Off to work already?"},
+         {speaker:"B",text:"Yes! I left the house early — it's so cold today."},
+         {speaker:"A",text:"I know. My kids asked me to drive them to school."},
+         {speaker:"B",text:"Smart idea! See you next week then."},
+       ]},
+     ],
+    },
+    {id:"t2",icon:"🛒",title:"Shopping & Prices",
+     context:"Conversation at a market stall or corner shop.",
+     rule:{title:"Linking Words — Connect Like a Native Speaker",
+       body:"British English flows smoothly because speakers link words together. When a word ends in a consonant and the next word begins with a vowel, they connect naturally: 'pick it up' sounds like 'pick-it-up'. When two vowel sounds meet, a glide /w/ or /j/ bridges them: 'go on' → 'go-w-on', 'see it' → 'see-y-it'. Choppy, word-by-word speech is the most common cause of sounding non-native.",
+       targets:["consonant + vowel linking: 'pick_it_up'","intrusive /w/: 'go_on', 'do_it'","intrusive /j/: 'see_it', 'the_offer'","avoid word gaps between content words"],
+       avoid:"Saying each word separately as if reading from a list — 'pick. it. up.' ❌"},
+     words:[
+       {w:"offer",  ph:"/ˈɒfə/",   def:"A price or deal proposed to a buyer",  emoji:"🏷️"},
+       {w:"amount", ph:"/əˈmaʊnt/", def:"A quantity or total sum",              emoji:"🔢"},
+       {w:"extra",  ph:"/ˈekstrə/", def:"Additional — more than expected",      emoji:"➕"},
+       {w:"open",   ph:"/ˈəʊpən/",  def:"Not closed; available for business",   emoji:"🚪"},
+       {w:"only",   ph:"/ˈəʊnli/",  def:"Solely, just — nothing more",          emoji:"1️⃣"},
+       {w:"around", ph:"/əˈraʊnd/", def:"Approximately; in the area of",        emoji:"🔄"},
+     ],
+     exercises:[
+       {type:"listen-repeat",instruction:"Listen to each word, then the linked phrase. Notice how the words blend together.",items:["offer","amount","extra","open","only","around"],phrases:["an offer","the amount is","extra on","open all","only eight","around here"]},
+       {type:"fill-blank",instruction:"Choose the correct word to complete each shopping sentence.",pairs:[
+         {sentence:"The shop is ______ from nine until six every day.", answer:"open",  options:["open","extra","only"]},
+         {sentence:"There's an ______ charge for gift wrapping.",        answer:"extra", options:["extra","amount","around"]},
+         {sentence:"It costs ______ ten pounds in total.",               answer:"around",options:["around","only","offer"]},
+         {sentence:"That's a great ______! I'll take two.",              answer:"offer", options:["offer","amount","open"]},
+       ]},
+       {type:"shadowing",instruction:"Shadow these sentences. Try to sound like ONE continuous stream of sound.",lines:[
+         {text:"The offer is only available until end of day.",        note:"'offer_is' links; 'only_available' has /j/ glide"},
+         {text:"The total amount is around eight pounds.",             note:"'amount_is' links; 'around_eight' links — no pause between"},
+         {text:"Can I pick it up at the open market?",                 note:"'pick_it_up_at_the' — five words, one breath, all linked"},
+       ]},
+       {type:"dialogue",instruction:"Read this shopping conversation aloud. Focus on linking every content word smoothly.",lines:[
+         {speaker:"Assistant",text:"Good afternoon! Can I help you with anything?"},
+         {speaker:"Customer", text:"Yes — what's the amount for that item over there?"},
+         {speaker:"Assistant",text:"It's around eight pounds. There's an extra offer if you buy two."},
+         {speaker:"Customer", text:"Only eight? That's brilliant. I'll take it."},
+       ]},
+     ],
+    },
+  ],
+  B1B2:[
+    {id:"t3",icon:"💼",title:"Job Interviews",
+     context:"A formal interview at a British company.",
+     rule:{title:"Sentence Stress & Pitch — Where the Beat Falls Changes Everything",
+       body:"English is stress-timed: a few key words per sentence are LOUD, LONG, and HIGH-pitched; everything else is quiet and fast. This is completely different from Vietnamese, where every syllable is roughly equal in length (flat tone). In a sentence like 'I'm really GOOD at managing PROJECTS', the capitalised words carry the nuclear stress. Pick ONE main word per phrase to peak on — this signals to the listener what is most important.",
+       targets:["nuclear stress on key content word","falling tone (↘) for confident statements","rising tone (↗) for questions and invitations","reduce function words: 'I'm', 'at', 'with', 'and'"],
+       avoid:"Flat, equal-length syllables — sounds robotic and unsure ❌"},
+     words:[
+       {w:"dedicated",   ph:"/ˈdedɪkeɪtɪd/", def:"Wholly committed to a task or cause",          emoji:"🎯"},
+       {w:"initiative",  ph:"/ɪˈnɪʃətɪv/",   def:"The ability to take action without being told", emoji:"💡"},
+       {w:"collaborate", ph:"/kəˈlæbəreɪt/",  def:"To work jointly with others",                  emoji:"🤝"},
+       {w:"demonstrate", ph:"/ˈdemənstreɪt/",  def:"To show clearly by example or action",         emoji:"🖥️"},
+       {w:"responsible", ph:"/rɪˈspɒnsɪbl/",  def:"Accountable; having a duty to do something",   emoji:"✅"},
+       {w:"efficiently", ph:"/ɪˈfɪʃəntli/",   def:"In a well-organised, productive manner",       emoji:"⚡"},
+     ],
+     exercises:[
+       {type:"listen-repeat",instruction:"Listen to each word. The stressed syllable is louder, longer, and higher. Repeat until it feels natural.",items:["dedicated","initiative","collaborate","demonstrate","responsible","efficiently"]},
+       {type:"fill-blank",instruction:"Choose the word that best completes each interview answer.",pairs:[
+         {sentence:"I always take the ______ to solve problems before they grow.",      answer:"initiative",  options:["initiative","demonstrate","collaborate"]},
+         {sentence:"In my last role, I was ______ for a team of twelve people.",        answer:"responsible", options:["responsible","dedicated","efficiently"]},
+         {sentence:"I ______ most effectively when working with cross-functional teams.",answer:"collaborate", options:["collaborate","demonstrate","efficiently"]},
+         {sentence:"I'm deeply ______ to delivering high-quality work on time.",        answer:"dedicated",   options:["dedicated","responsible","initiative"]},
+       ]},
+       {type:"shadowing",instruction:"Shadow each answer. The CAPS word is where pitch peaks — go high there, then fall confidently.",lines:[
+         {text:"I'm particularly good at managing projects EFFiciently under pressure.", note:"Peak on 'EFF-' → signals confidence in this specific skill"},
+         {text:"I always take the inITiative when I see a problem needs solving.",       note:"Peak on 'NI-' in initiative → emphatic, direct"},
+         {text:"I reLY on clear COMMunication to COLlaborate with my TEAM.",            note:"Multiple peaks: each advances a key point — don't flatten them"},
+       ]},
+       {type:"dialogue",instruction:"Perform this interview exchange. The interviewer asks → candidate answers confidently with a falling tone.",lines:[
+         {speaker:"Interviewer",text:"Could you tell me how you demonstrate initiative at work?"},
+         {speaker:"Candidate",  text:"Absolutely. I always look for ways to collaborate efficiently with my team."},
+         {speaker:"Interviewer",text:"And how do you handle tight deadlines?"},
+         {speaker:"Candidate",  text:"I'm very dedicated to planning ahead, so I'm rarely caught unprepared."},
+       ]},
+     ],
+    },
+    {id:"t4",icon:"🏥",title:"Healthcare Appointments",
+     context:"Speaking to a GP or pharmacist in the UK.",
+     rule:{title:"Weak Forms & the Schwa — The Secret Rhythm of Natural English",
+       body:"Function words (a, an, the, to, of, for, and, but, was, were, have, at, from) are almost always 'weak' — they use the schwa /ə/ sound and are short and unstressed. Native speakers say 'wanna' for 'want to', 'a lotta' for 'a lot of', 'gonna' for 'going to'. If you pronounce every function word clearly and fully, speech sounds foreign and robotic — even if every content word is perfect.",
+       targets:["'a' → /ə/ (unstressed): 'a doctor'","'the' → /ðə/ (before consonant)","'to' → /tə/: 'want to go'","'of' → /əv/: 'a lot of time'","contractions: 'I've', 'I'd', 'it's'"],
+       avoid:"Giving full strong vowels to function words — 'I want TO go TO THE shop' ❌"},
+     words:[
+       {w:"prescription",ph:"/prɪˈskrɪpʃn/", def:"A doctor's written instruction for medicine",    emoji:"💊"},
+       {w:"symptom",     ph:"/ˈsɪmptəm/",    def:"A sign that suggests an illness is present",     emoji:"🌡️"},
+       {w:"appointment", ph:"/əˈpɔɪntmənt/", def:"A scheduled meeting with a professional",        emoji:"📅"},
+       {w:"allergic",    ph:"/əˈlɜːdʒɪk/",   def:"Having an adverse reaction to a substance",     emoji:"🤧"},
+       {w:"pharmacy",    ph:"/ˈfɑːməsi/",     def:"A shop where medicines are sold and dispensed", emoji:"⚕️"},
+       {w:"dosage",      ph:"/ˈdəʊsɪdʒ/",    def:"The prescribed amount and frequency of medicine",emoji:"🔢"},
+     ],
+     exercises:[
+       {type:"listen-repeat",instruction:"Listen to each word in isolation, then in a short phrase. Notice the weak /ə/ sounds in unstressed syllables.",items:["prescription","symptom","appointment","allergic","pharmacy","dosage"]},
+       {type:"fill-blank",instruction:"Choose the correct medical term for each context.",pairs:[
+         {sentence:"I need to book an ______ with my GP as soon as possible.",        answer:"appointment",  options:["appointment","dosage","symptom"]},
+         {sentence:"The main ______ is a sharp pain on my left side.",                answer:"symptom",      options:["symptom","prescription","pharmacy"]},
+         {sentence:"Are you ______ to penicillin or any other medication?",           answer:"allergic",     options:["allergic","dosage","appointment"]},
+         {sentence:"Take this ______ straight to the ______ on the ground floor.",    answer:"prescription", options:["prescription","symptom","dosage"]},
+       ]},
+       {type:"shadowing",instruction:"Shadow the doctor's questions. The underlined words are weak — say them short and light, almost swallowed.",lines:[
+         {text:"Have you had a look at the dosage on the prescription?", note:"'a' /ə/, 'the' /ðə/ × 2 — very short and unstressed"},
+         {text:"I'd like to refer you to a specialist at the hospital.", note:"'to' /tə/, 'a' /ə/, 'at the' /ət ðə/ — all reduced"},
+         {text:"Are you allergic to any of the medications you're taking?",note:"'to' /tə/, 'of the' /əv ðə/ — run together naturally"},
+       ]},
+       {type:"dialogue",instruction:"Read this GP consultation. Reduce all function words — keep only the medical content words strong.",lines:[
+         {speaker:"Doctor", text:"Good morning. What seems to be the problem today?"},
+         {speaker:"Patient",text:"I've had a bad headache for a couple of days now."},
+         {speaker:"Doctor", text:"Are you allergic to any medication? Any other symptoms?"},
+         {speaker:"Patient",text:"No allergies. Just the headache — and I'm a bit dizzy."},
+         {speaker:"Doctor", text:"I'll write you a prescription. Take it to the pharmacy on the ground floor."},
+       ]},
+     ],
+    },
+  ],
+  B2C1:[
+    {id:"t5",icon:"📊",title:"Business Presentations",
+     context:"Delivering a quarterly update to a British corporate team.",
+     rule:{title:"Thought Groups & Strategic Pausing — Chunking for Clarity",
+       body:"Fluent speakers divide continuous speech into short 'thought groups' — meaningful chunks separated by micro-pauses (about half a second). Each chunk carries one idea. Pausing after a key term gives the listener time to process it. It also makes the speaker sound authoritative and in control. Discourse markers like 'However,', 'As you can see,', 'That said,' always take a pause after them.",
+       targets:["pause after discourse markers: 'However, |'","pause between subject and predicate in long sentences","falling tone on last word of each thought group","rising tone before a pause when listing or giving conditions"],
+       avoid:"Either rushing through the whole sentence without pausing, or pausing randomly mid-word ❌"},
+     words:[
+       {w:"substantial", ph:"/səbˈstænʃl/",   def:"Considerable in size, value, or importance", emoji:"📈"},
+       {w:"discrepancy", ph:"/dɪˈskrepənsi/", def:"A noticeable difference or inconsistency",   emoji:"⚖️"},
+       {w:"trajectory",  ph:"/trəˈdʒektəri/", def:"The path or course of development over time",emoji:"🚀"},
+       {w:"provisional", ph:"/prəˈvɪʒənl/",   def:"Temporary; subject to change later",         emoji:"📋"},
+       {w:"fluctuation", ph:"/ˌflʌktʃuˈeɪʃn/",def:"An irregular rise and fall in a value",     emoji:"📉"},
+       {w:"stakeholder", ph:"/ˈsteɪkhəʊldə/", def:"A person with an interest or stake in a business",emoji:"👔"},
+     ],
+     exercises:[
+       {type:"listen-repeat",instruction:"Listen to each word. These are 4-5 syllable words — find the primary stress and let everything else reduce to /ə/.",items:["substantial","discrepancy","trajectory","provisional","fluctuation","stakeholder"]},
+       {type:"fill-blank",instruction:"Complete these sentences from a business presentation.",pairs:[
+         {sentence:"There's a clear ______ between Q2 projections and actual results.",   answer:"discrepancy", options:["discrepancy","fluctuation","trajectory"]},
+         {sentence:"The growth ______ for next quarter looks very promising.",             answer:"trajectory",  options:["trajectory","provisional","substantial"]},
+         {sentence:"These figures are ______ — we'll confirm them by Friday.",            answer:"provisional", options:["provisional","substantial","discrepancy"]},
+         {sentence:"Key ______ have already been briefed on the revised strategy.",       answer:"stakeholders",options:["stakeholders","fluctuations","trajectories"]},
+       ]},
+       {type:"shadowing",instruction:"Shadow each sentence in chunks. The | symbol marks where to pause briefly.",lines:[
+         {text:"As you can see here, | there's been a substantial fluctuation | in our quarterly figures.", note:"Pause after 'here' and 'fluctuation' — one idea per chunk"},
+         {text:"However, | the overall trajectory remains positive, | despite the discrepancy in Q2.",      note:"'However' always gets a clear pause after it — signals contrast"},
+         {text:"We'll share a provisional timeline with stakeholders | by the end of this week.",           note:"Pause before 'by' — separates the promise from the deadline"},
+       ]},
+       {type:"dialogue",instruction:"Deliver this presentation excerpt. Mark your own thought groups before you start speaking.",lines:[
+         {speaker:"Presenter",text:"Good morning, everyone. Thank you for joining us today."},
+         {speaker:"Presenter",text:"I'd like to walk you through our Q3 results. Overall, we've seen substantial growth."},
+         {speaker:"Presenter",text:"However, there is a notable discrepancy in the Eastern region's figures."},
+         {speaker:"Presenter",text:"The overall trajectory, nevertheless, remains very encouraging for all stakeholders."},
+         {speaker:"Presenter",text:"These are provisional numbers — the final report will be with you on Friday."},
+       ]},
+     ],
+    },
+    {id:"t6",icon:"🎓",title:"Academic Lectures",
+     context:"A university seminar or research lecture in the UK.",
+     rule:{title:"Polysyllabic Words — Stress, Reduction & Connected Academic Speech",
+       body:"At B2–C1 level, mastery means combining all earlier rules at once: clear final consonants + linking + correct word stress + reduced weak forms + thought groups. Long academic words trip learners up because they try to say every syllable equally. The rule: identify primary stress, reduce everything else to /ə/ or /ɪ/, then connect naturally to surrounding words. English spelling does NOT show pronunciation — never try to pronounce academic words letter by letter.",
+       targets:["primary stress in 4-5 syllable words","secondary stress position","vowel reduction: unstressed → /ə/","linking academic phrases: 'in terms of', 'as a result of'"],
+       avoid:"Spelling-based pronunciation — saying every letter clearly (English is NOT phonetic) ❌"},
+     words:[
+       {w:"phenomenon",   ph:"/fɪˈnɒmɪnən/",   def:"An observable event or fact worth studying", emoji:"🔭"},
+       {w:"contemporary", ph:"/kənˈtempərəri/",  def:"Belonging to or happening in the present",  emoji:"🗓️"},
+       {w:"methodology",  ph:"/ˌmeθəˈdɒlədʒi/", def:"A system of methods used in research",      emoji:"🔬"},
+       {w:"predominantly",ph:"/prɪˈdɒmɪnəntli/",def:"Mainly; for the most part",                emoji:"📊"},
+       {w:"curriculum",   ph:"/kəˈrɪkjʊləm/",   def:"The full course of study at an institution",emoji:"📚"},
+       {w:"hypothesis",   ph:"/haɪˈpɒθɪsɪs/",   def:"A proposed explanation to be tested by research",emoji:"❓"},
+     ],
+     exercises:[
+       {type:"listen-repeat",instruction:"Say the word slowly counting syllables, then at natural speed. The stressed syllable is louder and longer.",items:["phenomenon","contemporary","methodology","predominantly","curriculum","hypothesis"]},
+       {type:"fill-blank",instruction:"Choose the correct academic word for each context.",pairs:[
+         {sentence:"Our research ______ involves both qualitative and quantitative approaches.", answer:"methodology",  options:["methodology","hypothesis","phenomenon"]},
+         {sentence:"The ______ was first documented in studies from the 1970s.",                answer:"phenomenon",   options:["phenomenon","curriculum","methodology"]},
+         {sentence:"The student body at this university is ______ from overseas.",              answer:"predominantly",options:["predominantly","contemporary","hypothesis"]},
+         {sentence:"Our initial ______ has been strongly supported by the data.",               answer:"hypothesis",   options:["hypothesis","curriculum","phenomenon"]},
+       ]},
+       {type:"shadowing",instruction:"Shadow this lecture extract. Stressed syllables are in CAPS — go loud there, rush everything else.",lines:[
+         {text:"The phenomenon we're studying predominantly affects contemporary urban populations.", note:"phe-NOM-e-non | pre-DOM-in-antly | con-TEM-por-ary — big drops on unstressed syllables"},
+         {text:"Our methodology draws on established curriculum frameworks from three institutions.",  note:"me-THOD-ol-o-gy | cur-RIC-u-lum — unstressed syllables all reduce to /ə/"},
+         {text:"The hypothesis, as I mentioned, must be tested against contemporary evidence.",        note:"hy-POTH-e-sis — 'as I' is weak; 'MUST be TESTED' are the strong beats"},
+       ]},
+       {type:"dialogue",instruction:"Deliver this academic exchange naturally, at the pace of a real university seminar.",lines:[
+         {speaker:"Lecturer",text:"Today we'll explore a fascinating phenomenon in contemporary sociolinguistics."},
+         {speaker:"Student", text:"Could you explain the methodology you used in your original research?"},
+         {speaker:"Lecturer",text:"Certainly. The methodology is predominantly qualitative in its approach."},
+         {speaker:"Student", text:"Does the hypothesis account for regional curriculum differences?"},
+         {speaker:"Lecturer",text:"Sharp question — yes, the hypothesis was specifically designed to address that."},
+       ]},
+     ],
+    },
+  ],
+  C1C2:[
+    {id:"t7",icon:"⚖️",title:"Legal & Formal Discourse",
+     context:"A formal hearing, legal briefing, or high-level policy discussion.",
+     rule:{title:"Intonation as Meaning — The Same Sentence, Seven Different Meanings",
+       body:"At C1–C2, pronunciation is about subtle meaning-making through intonation. The SAME sentence with different stress implies a completely different message: 'I didn't say SHE took it' (someone else did) vs 'I didn't SAY she took it' (I wrote it, or implied it). British RP uses a 'high fall' tone ↘ for authoritative statements, a 'low rise' ↗ for polite challenge or invitation, and contrastive stress to signal logical contrast. These are not decorative — they are the difference between sounding native and sounding foreign at C-level.",
+       targets:["contrastive stress for logical contrast","high fall ↘ for authority and certainty","low rise ↗ for polite challenge","rhetorical pause before key terms","tag questions: falling = rhetorical; rising = genuine"],
+       avoid:"Flat declarative tone that removes all pragmatic and logical nuance ❌"},
+     words:[
+       {w:"corroborate",  ph:"/kəˈrɒbəreɪt/",   def:"To confirm or support with independent evidence",  emoji:"📝"},
+       {w:"jurisdiction", ph:"/ˌdʒʊərɪsˈdɪkʃn/",def:"The territory or scope of official legal authority",emoji:"⚖️"},
+       {w:"inadmissible", ph:"/ˌɪnədˈmɪsɪbl/",  def:"Not acceptable as evidence under legal rules",     emoji:"❌"},
+       {w:"arbitration",  ph:"/ˌɑːbɪˈtreɪʃn/",  def:"Dispute resolution conducted outside a court",     emoji:"🤝"},
+       {w:"precedent",    ph:"/ˈpresɪdənt/",     def:"A prior case that establishes a rule for future cases",emoji:"📜"},
+       {w:"substantiate", ph:"/səbˈstænʃieɪt/",  def:"To provide solid evidence to prove a claim",       emoji:"🔍"},
+     ],
+     exercises:[
+       {type:"listen-repeat",instruction:"Repeat with RP precision: clear long vowels, precise final consonants, correct stress. These are formal register words.",items:["corroborate","jurisdiction","inadmissible","arbitration","precedent","substantiate"]},
+       {type:"fill-blank",instruction:"Complete these formal exchanges from a legal setting.",pairs:[
+         {sentence:"This document will ______ the defendant's account of the events.",   answer:"corroborate",  options:["corroborate","substantiate","arbitration"]},
+         {sentence:"The evidence presented before the court is clearly ______.",          answer:"inadmissible", options:["inadmissible","jurisdiction","precedent"]},
+         {sentence:"We may need to consider ______ to resolve this matter efficiently.",  answer:"arbitration",  options:["arbitration","precedent","corroborate"]},
+         {sentence:"The ruling established an important ______ for all future cases.",    answer:"precedent",    options:["precedent","jurisdiction","inadmissible"]},
+       ]},
+       {type:"shadowing",instruction:"Shadow with precise intonation. CAPS = contrastive stress (louder, higher, longer).",lines:[
+         {text:"The evidence may CORROBORATE his statement, but it does not SUBSTANTIATE it.", note:"Contrast: two similar legal concepts with critically different weight"},
+         {text:"This falls WITHIN our jurisdiction — that matter does NOT.",                   note:"High fall on 'jurisdiction'; emphatic stress + pause before 'NOT'"},
+         {text:"We established that precedent in 2019, didn't we?",                           note:"Tag 'didn't we?' with low rise ↗ = polite challenge, not genuine question"},
+       ]},
+       {type:"dialogue",instruction:"Deliver this formal legal exchange. Use full RP: precise articulation, varied pitch, deliberate pausing.",lines:[
+         {speaker:"QC",     text:"Can you corroborate this testimony with any documentary evidence?"},
+         {speaker:"Witness",text:"I can substantiate my account fully — with emails dated the fourteenth of March."},
+         {speaker:"QC",     text:"I submit, My Lord, that this evidence is inadmissible under current precedent."},
+         {speaker:"Judge",  text:"This matter falls squarely within our jurisdiction. Counsel, please continue."},
+         {speaker:"QC",     text:"In that case, perhaps arbitration would better serve both parties at this stage."},
+       ]},
+     ],
+    },
+    {id:"t8",icon:"🌐",title:"Media & Public Speaking",
+     context:"A TED-style talk, radio interview, or panel discussion.",
+     rule:{title:"Full Vocal Range — The Complete Phonological Toolkit",
+       body:"C2 speakers have complete, deliberate control over every phonological feature. This means: wide pitch range (a narrow range sounds bored or anxious), articulatory precision on consonant clusters at natural pace, correct schwa in clusters, and purposeful variation in volume and pace for rhetorical effect — slowing down on key claims, speeding up for lists, nearly whispering for intimacy. A native speaker at this level uses their voice like a musician uses dynamics.",
+       targets:["wide pitch range: low statements, high peaks","deliberate pace modulation: slow for emphasis, fast for lists","volume variation: quiet for intimacy, loud for key claims","schwa in consonant clusters","rhetorical repetition with shifted stress"],
+       avoid:"Narrow, flat pitch range — even at high accuracy, a monotone voice sounds non-native ❌"},
+     words:[
+       {w:"articulate",   ph:"/ɑːˈtɪkjʊlɪt/",  def:"Able to express ideas clearly and fluently",     emoji:"🗣️"},
+       {w:"paradigm",     ph:"/ˈpærədaɪm/",     def:"A typical example or fundamental pattern",       emoji:"🔄"},
+       {w:"unprecedented",ph:"/ʌnˈpresɪdentɪd/",def:"Never done or experienced before in history",    emoji:"🚀"},
+       {w:"eloquently",   ph:"/ˈeləkwəntli/",   def:"In a fluent, expressive, and persuasive manner", emoji:"✨"},
+       {w:"resonate",     ph:"/ˈrezəneɪt/",     def:"To produce a meaningful emotional response",     emoji:"🎵"},
+       {w:"nuanced",      ph:"/ˈnjuːɑːnst/",    def:"Showing subtle, complex distinctions in meaning", emoji:"🎨"},
+     ],
+     exercises:[
+       {type:"listen-repeat",instruction:"Repeat with expressive range — these are public-speaking words and they must SOUND impressive. Vary your pitch.",items:["articulate","paradigm","unprecedented","eloquently","resonate","nuanced"]},
+       {type:"fill-blank",instruction:"Complete these public-speaking sentences with the correct word.",pairs:[
+         {sentence:"This shift represents a complete ______ change in how we approach the problem.", answer:"paradigm",      options:["paradigm","nuanced","articulate"]},
+         {sentence:"The challenge we face as a generation is truly ______.",                         answer:"unprecedented", options:["unprecedented","resonate","eloquently"]},
+         {sentence:"She put her argument so ______ that the entire room fell silent.",               answer:"eloquently",    options:["eloquently","paradigm","nuanced"]},
+         {sentence:"This message needs to ______ with people from every walk of life.",              answer:"resonate",      options:["resonate","articulate","unprecedented"]},
+       ]},
+       {type:"shadowing",instruction:"Shadow this TED-style opening. Use the full range of your voice — high peaks, low valleys, deliberate pauses.",lines:[
+         {text:"What we're facing today is truly unprecedented — and yet we have every reason to be optimistic.", note:"Wide pitch: peak on 'TRULY', deep fall on 'unprecedented', rise on 'optimistic'"},
+         {text:"This paradigm shift is not just nuanced — it is FUNDAMENTAL.",                                   note:"Contrast: 'not just nuanced' light; 'FUNDAMENTAL' strong high fall — the key claim"},
+         {text:"I want to share an idea that I believe will resonate with every single one of you.",             note:"Slow down on 'every — single — one — of — you' — deliberate connection with audience"},
+       ]},
+       {type:"dialogue",instruction:"Perform this radio panel discussion. Bring full vocal variety — a flat reading will sound like a B1 student, not a C2 speaker.",lines:[
+         {speaker:"Host", text:"You've articulated this argument so eloquently in your book. Can you summarise it for us?"},
+         {speaker:"Guest",text:"Of course. The core idea is that we're witnessing an unprecedented paradigm shift in society."},
+         {speaker:"Host", text:"A nuanced point — do you think it will resonate with policymakers?"},
+         {speaker:"Guest",text:"I do. The evidence is simply too compelling and too consistent to be ignored any longer."},
+         {speaker:"Host", text:"Brilliant. We'll take a short break and then get to your questions."},
+       ]},
+     ],
+    },
+  ],
+};
+
+/* ═══════════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════════ */
+let userName="", userEmail="";
+let selectedLevel=null, selectedTopic=null;
+let currentStep="home";   // home | rule | words | exercises | result
+let currentExIdx=0;
+let answers={};           // key → selected option
+let submitted={};         // exKey → true
+let exScores={};          // exKey → {score,total,attempt,pairs}
+let attemptCounts={};     // exKey → number
+let allResults=[];        // [{key,topicId,exerciseIdx,score,total,attempt,pairs}]
+
+/* ═══════════════════════════════════════════════════════
+   VOICES
+═══════════════════════════════════════════════════════ */
+let _voices=[];
+function loadVoices(){
+  return new Promise(resolve=>{
+    const set=()=>{_voices=speechSynthesis.getVoices();resolve()};
+    if(speechSynthesis.getVoices().length){set();return}
+    speechSynthesis.onvoiceschanged=set;
+  });
+}
+function getBritishVoice(){
+  const prefer=["daniel","google uk english female","google uk english male","kate","serena"];
+  return prefer.reduce((f,name)=>f||_voices.find(v=>v.lang==="en-GB"&&v.name.toLowerCase().includes(name)),null)
+    ||_voices.find(v=>v.lang==="en-GB")
+    ||_voices.find(v=>v.lang.startsWith("en"))
+    ||null;
+}
+loadVoices();
+
+/* ═══════════════════════════════════════════════════════
+   AUDIO
+═══════════════════════════════════════════════════════ */
+let currentBtn=null;
+function speakText(text,rate,btnEl,onEnd){
+  speechSynthesis.cancel();
+  if(currentBtn&&currentBtn!==btnEl){resetBtn(currentBtn)}
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang="en-GB"; u.rate=rate||0.9; u.pitch=1.05;
+  const v=getBritishVoice(); if(v)u.voice=v;
+  u.onend=()=>{
+    if(btnEl){resetBtn(btnEl)}
+    currentBtn=null;
+    if(onEnd)onEnd();
+  };
+  speechSynthesis.speak(u);
+  currentBtn=btnEl;
+  if(btnEl){
+    btnEl.dataset.origText=btnEl.dataset.origText||btnEl.textContent;
+    btnEl.textContent="⏹ Stop";
+    btnEl.classList.add("playing");
+    btnEl.onclick=()=>{speechSynthesis.cancel();resetBtn(btnEl);currentBtn=null;};
+  }
+}
+function resetBtn(btn){
+  if(!btn)return;
+  btn.textContent=btn.dataset.origText||"🔊 Listen";
+  btn.classList.remove("playing");
+  btn.onclick=btn._origClick||null;
+}
+function makeAudioBtn(text,rate,label,small,ghost){
+  const b=document.createElement("button");
+  b.className="audio-btn"+(small?" small":"")+(ghost?" ghost":"");
+  b.textContent=label||"🔊 Listen";
+  b.dataset.origText=b.textContent;
+  b._origClick=()=>speakText(text,rate,b);
+  b.onclick=b._origClick;
+  return b;
+}
+
+/* ═══════════════════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════════════════ */
+function ordinal(n){return["1st","2nd","3rd","4th","5th"][n-1]||n+"th"}
+function exKey(tid,ei){return tid+"_ex"+ei}
+function lvColour(){return (LEVELS.find(l=>l.id===selectedLevel)||{badge:"#003087"}).badge}
+function setVar(name,val){document.documentElement.style.setProperty(name,val)}
+function showScreen(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.getElementById("screen-"+id).classList.add("active");
+  window.scrollTo(0,0);
+}
+
+/* ═══════════════════════════════════════════════════════
+   HEADER
+═══════════════════════════════════════════════════════ */
+function updateHeader(backLabel,topicTitle,lvLabel,showSub){
+  const bb=document.getElementById("back-btn");
+  if(backLabel){bb.classList.add("show");document.getElementById("back-label").textContent=backLabel}
+  else bb.classList.remove("show");
+  const sub=document.getElementById("header-sub");
+  if(showSub){
+    sub.style.display="flex";
+    document.getElementById("hdr-topic-title").textContent=topicTitle||"";
+    document.getElementById("hdr-level-pill").textContent=lvLabel||"";
+  }else sub.style.display="none";
+}
+function toggleUserForm(){
+  const f=document.getElementById("user-form");
+  const d=document.getElementById("user-display");
+  const showing=f.classList.contains("show");
+  if(showing){f.classList.remove("show");d.classList.remove("hide")}
+  else{
+    f.classList.add("show");d.classList.add("hide");
+    document.getElementById("inp-name").value=userName;
+    document.getElementById("inp-email").value=userEmail;
+  }
+}
+function updateUserPreview(){
+  userName=document.getElementById("inp-name").value;
+  userEmail=document.getElementById("inp-email").value;
+}
+function saveUser(){
+  userName=document.getElementById("inp-name").value.trim();
+  userEmail=document.getElementById("inp-email").value.trim();
+  document.getElementById("hdr-name").textContent=userName||"Add your name";
+  document.getElementById("hdr-email").textContent=userEmail||"Add email for PDF report";
+  toggleUserForm();
+}
+
+/* ═══════════════════════════════════════════════════════
+   HOME
+═══════════════════════════════════════════════════════ */
+function renderHome(){
+  currentStep="home";
+  updateHeader(null,null,null,false);
+  setVar("--lv-colour","#003087");
+
+  // stats
+  const ts=allResults.reduce((a,r)=>a+r.score,0);
+  const tt=allResults.reduce((a,r)=>a+r.total,0);
+  if(tt>0){
+    document.getElementById("stat-pct").textContent=Math.round(ts/tt*100)+"%";
+    document.getElementById("stat-ex").textContent=allResults.length;
+    document.getElementById("hero-stats").style.display="flex";
+  }
+
+  const cont=document.getElementById("level-sections");
+  cont.innerHTML="";
+  LEVELS.forEach(lv=>{
+    const sec=document.createElement("div");
+    sec.className="level-section";
+    sec.innerHTML=`<div class="level-header">
+      <span class="level-label" style="background:${lv.badge}">${lv.label}</span>
+      <span class="level-desc">${lv.desc}</span>
+    </div>`;
+    const grid=document.createElement("div");
+    grid.className="topic-grid";
+    (TOPICS[lv.id]||[]).forEach(topic=>{
+      const topicRes=allResults.filter(r=>r.topicId===topic.id);
+      const done=topicRes.length>0;
+      const ts2=topicRes.reduce((a,r)=>a+r.score,0);
+      const tt2=topicRes.reduce((a,r)=>a+r.total,0);
+      const card=document.createElement("div");
+      card.className="topic-card"+(done?" done":"");
+      card.style.setProperty("--card-colour",lv.badge);
+      if(done)card.style.borderColor=lv.badge;
+      card.innerHTML=`
+        <div class="topic-icon">${topic.icon}</div>
+        <div class="topic-title">${topic.title}</div>
+        <div class="topic-ctx">${topic.context}</div>
+        <div class="topic-footer">
+          <span class="topic-count">${topic.exercises.length} exercises</span>
+          ${done
+            ?`<span class="topic-done" style="color:${lv.badge}">${ts2}/${tt2} ✓ Done</span>`
+            :`<span class="topic-start" style="background:${lv.badge}20;color:${lv.badge}">Start →</span>`
+          }
+        </div>
+        ${done&&tt2>0?`<div class="progress-track" style="margin-top:10px"><div class="progress-fill" style="width:${Math.round(ts2/tt2*100)}%;background:${lv.badge}"></div></div>`:""}
+      `;
+      card.onclick=()=>startTopic(lv.id,topic);
+      grid.appendChild(card);
+    });
+    sec.appendChild(grid);
+    cont.appendChild(sec);
+  });
+
+  // summary
+  if(allResults.length>0){
+    const topicCount=new Set(allResults.map(r=>r.topicId)).size;
+    document.getElementById("summary-text").textContent=`${allResults.length} exercises completed across ${topicCount} topic(s).`;
+    document.getElementById("summary-section").style.display="block";
+  }
+
+  showScreen("home");
+}
+
+/* ═══════════════════════════════════════════════════════
+   START TOPIC
+═══════════════════════════════════════════════════════ */
+function startTopic(levelId,topic){
+  selectedLevel=levelId;
+  selectedTopic=topic;
+  currentExIdx=0;
+  answers={};submitted={};
+  setVar("--lv-colour",lvColour());
+  renderRule();
+}
+
+function handleBack(){
+  if(currentStep==="rule")renderHome();
+  else if(currentStep==="words")renderRule();
+  else if(currentStep==="exercises")renderWords();
+  else if(currentStep==="result")renderHome();
+}
+
+/* ═══════════════════════════════════════════════════════
+   RULE SCREEN
+═══════════════════════════════════════════════════════ */
+function renderRule(){
+  currentStep="rule";
+  const lv=LEVELS.find(l=>l.id===selectedLevel);
+  updateHeader("All Topics",`${selectedTopic.icon} ${selectedTopic.title}`,lv.label,true);
+
+  const r=selectedTopic.rule;
+  const col=lvColour();
+  const cont=document.getElementById("rule-content");
+  cont.innerHTML=`
+    <div class="rule-card" style="border:1.5px solid ${col}40">
+      <div class="rule-eyebrow" style="color:${col}">Today's Pronunciation Focus</div>
+      <div class="rule-title">${r.title}</div>
+      <div class="rule-body">${r.body}</div>
+      <div class="rule-targets">
+        <div class="rule-targets-title">🎯 Specific Focus Points</div>
+        ${r.targets.map(t=>`<div class="target-item"><div class="target-dot" style="background:${col}"></div><span class="target-text">${t}</span></div>`).join("")}
+      </div>
+      <div class="avoid-box">
+        <span class="avoid-label">⚠️ Vietnamese learner error to avoid: </span>
+        <span class="avoid-text">${r.avoid}</span>
+      </div>
+    </div>
+    <div class="context-card">
+      <div class="context-label">🎧 Context for This Session</div>
+      <div class="context-text">"${selectedTopic.context}"</div>
+      <div id="rule-audio-area"></div>
+    </div>
+  `;
+
+  document.getElementById("rule-audio-area").appendChild(
+    makeAudioBtn(`${r.title}. ${r.body}`,0.85,"🔊 Listen to explanation")
+  );
+
+  document.getElementById("rule-next-btn").style.background=`linear-gradient(90deg,var(--navy),${col})`;
+
+  // step indicators
+  ["step-r0","step-r1","step-r2"].forEach((id,i)=>{
+    const el=document.getElementById(id);
+    el.style.background=i===0?col:"#fff";
+    el.style.color=i===0?"#fff":"var(--muted)";
+    el.style.borderColor=i===0?col:"var(--border)";
+  });
+
+  showScreen("rule");
+}
+
+function goToWords(){renderWords()}
+
+/* ═══════════════════════════════════════════════════════
+   WORDS SCREEN
+═══════════════════════════════════════════════════════ */
+function renderWords(){
+  currentStep="words";
+  const lv=LEVELS.find(l=>l.id===selectedLevel);
+  updateHeader("Rule",`${selectedTopic.icon} ${selectedTopic.title}`,lv.label,true);
+  const col=lvColour();
+
+  document.getElementById("step-w1").style.cssText=`background:${col};color:#fff;border-color:${col}`;
+  document.getElementById("step-w2").style.cssText="background:#fff;color:var(--muted);border-color:var(--border)";
+  document.querySelector("#screen-words .step-item.done").style.cssText=`background:${col}30;color:${col};border-color:${col}`;
+
+  const grid=document.getElementById("vocab-content");
+  grid.innerHTML="";
+  selectedTopic.words.forEach(wd=>{
+    const card=document.createElement("div");
+    card.className="vocab-card";
+    card.innerHTML=`
+      <div class="vocab-emoji">${wd.emoji}</div>
+      <div class="vocab-info">
+        <div><span class="vocab-word">${wd.w}</span><span class="vocab-ph">${wd.ph}</span></div>
+        <div class="vocab-def">${wd.def}</div>
+        <div class="vocab-btns" id="vb-${wd.w}"></div>
+      </div>
+    `;
+    grid.appendChild(card);
+    const area=card.querySelector(`#vb-${wd.w}`);
+    area.appendChild(makeAudioBtn(wd.w,0.9,"🔊 Listen",true));
+    area.appendChild(makeAudioBtn(wd.w,0.6,"🐢 Slow",true,true));
+  });
+
+  document.getElementById("words-next-btn").style.background=`linear-gradient(90deg,var(--navy),${col})`;
+
+  // play all
+  document.getElementById("play-all-btn")._origClick=()=>speakText(selectedTopic.words.map(w=>w.w).join(". "),0.9,document.getElementById("play-all-btn"));
+  document.getElementById("play-all-btn").onclick=document.getElementById("play-all-btn")._origClick;
+
+  showScreen("words");
+}
+
+function playAllWords(){speakText(selectedTopic.words.map(w=>w.w).join(". "),0.9,document.getElementById("play-all-btn"))}
+function playAllWordsSlow(){speakText(selectedTopic.words.map(w=>w.w).join(". "),0.6)}
+
+function goToExercises(){currentExIdx=0;renderExercises()}
+
+/* ═══════════════════════════════════════════════════════
+   EXERCISES SCREEN
+═══════════════════════════════════════════════════════ */
+function renderExercises(){
+  currentStep="exercises";
+  const lv=LEVELS.find(l=>l.id===selectedLevel);
+  updateHeader("Vocabulary",`${selectedTopic.icon} ${selectedTopic.title}`,lv.label,true);
+  const col=lvColour();
+  const ex=selectedTopic.exercises[currentExIdx];
+  const ek=exKey(selectedTopic.id,currentExIdx);
+  const isSubm=!!submitted[ek];
+  const score=exScores[ek];
+
+  // progress dots
+  const prog=document.getElementById("ex-progress");
+  prog.innerHTML="";
+  selectedTopic.exercises.forEach((_,i)=>{
+    const dot=document.createElement("div");
+    dot.className="ex-dot";
+    dot.style.background=i===currentExIdx?col:(exScores[exKey(selectedTopic.id,i)]?col+"60":"var(--border)");
+    dot.onclick=()=>{currentExIdx=i;renderExercises()};
+    prog.appendChild(dot);
+  });
+  const cnt=document.createElement("span");
+  cnt.className="ex-count";
+  cnt.textContent=`${currentExIdx+1}/${selectedTopic.exercises.length}`;
+  prog.appendChild(cnt);
+
+  // next btn
+  const nextBtn=document.getElementById("next-ex-btn");
+  nextBtn.style.background=`linear-gradient(90deg,var(--navy),${col})`;
+  nextBtn.textContent=currentExIdx<selectedTopic.exercises.length-1?"Next Exercise →":"Finish Session ✓";
+  if(ex.type==="fill-blank"&&!isSubm){
+    nextBtn.style.background="#e2e8f0";nextBtn.style.color="var(--muted)";nextBtn.disabled=true;
+  }else{nextBtn.style.color="#fff";nextBtn.disabled=false}
+
+  // prev btn
+  const prevBtn=document.getElementById("prev-ex-btn");
+  prevBtn.style.display=currentExIdx>0?"block":"none";
+
+  // content
+  const cont=document.getElementById("exercise-content");
+  cont.innerHTML="";
+  const card=document.createElement("div");
+  card.className="white-card";
+
+  // type badge + pills
+  const typeName=ex.type==="fill-blank"?"✏️ Fill in the Blanks":ex.type==="listen-repeat"?"🔊 Listen & Repeat":ex.type==="shadowing"?"🎙️ Shadowing":"🗣️ Dialogue Practice";
+  const hd=document.createElement("div");
+  hd.style.cssText="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap";
+  const badge=document.createElement("div");
+  badge.className="type-badge";
+  badge.style.background=col;
+  badge.textContent=typeName;
+  hd.appendChild(badge);
+  if(score){
+    hd.appendChild(makePill(ordinal(score.attempt)+" attempt",col));
+    hd.appendChild(makePill(`${score.score}/${score.total}`,score.score===score.total?"#16A34A":"#F59E0B"));
+  }
+  card.appendChild(hd);
+
+  const instr=document.createElement("p");
+  instr.className="instruction";
+  instr.textContent=ex.instruction;
+  card.appendChild(instr);
+
+  // ── LISTEN-REPEAT ──
+  if(ex.type==="listen-repeat"){
+    ex.items.forEach(word=>{
+      const wd=selectedTopic.words.find(w=>w.w===word);
+      const row=document.createElement("div");
+      row.className="word-row";
+      row.innerHTML=`<div class="word-emoji">${wd?.emoji||"🔤"}</div><div style="flex:1;min-width:0"><div class="word-text">${word}</div>${wd?`<div class="word-ph">${wd.ph}</div>`:""}</div>`;
+      const btns=document.createElement("div");btns.className="word-btns";
+      btns.appendChild(makeAudioBtn(word,0.9,"🔊 Listen",true));
+      btns.appendChild(makeAudioBtn(word,0.6,"🐢 Slow",true,true));
+      btns.appendChild(makeAudioBtn(`${word}. ${word}. ${word}.`,0.85,"×3",true));
+      row.appendChild(btns);
+      card.appendChild(row);
+    });
+    const tip=document.createElement("div");
+    tip.style.cssText="background:var(--cyanL);border-radius:10px;padding:14px;margin-top:4px;font-size:13px;color:var(--navy)";
+    tip.innerHTML="<b>Repeat method:</b> Listen → Repeat ×3 out loud → Listen again and compare. Feel where your tongue and lips move.";
+    card.appendChild(tip);
+  }
+
+  // ── FILL-BLANK ──
+  if(ex.type==="fill-blank"){
+    ex.pairs.forEach((p,i)=>{
+      const itemEl=document.createElement("div");
+      itemEl.className="blank-item";
+      itemEl.id=`blank-${i}`;
+      const sentEl=document.createElement("div");
+      sentEl.className="blank-sentence";
+      if(!isSubm){
+        const parts=p.sentence.split("______");
+        sentEl.appendChild(document.createTextNode(parts[0]));
+        const sel=document.createElement("select");
+        sel.className="blank-select";
+        sel.id=`sel-${ek}-${i}`;
+        sel.innerHTML=`<option value="">choose…</option>${p.options.map(o=>`<option value="${o}">${o}</option>`).join("")}`;
+        sel.value=answers[`${ek}_q${i}`]||"";
+        sel.onchange=e=>{
+          answers[`${ek}_q${i}`]=e.target.value;
+          updateCheckBtn();
+        };
+        sentEl.appendChild(sel);
+        if(parts[1])sentEl.appendChild(document.createTextNode(parts[1]));
+      }else{
+        const ua=answers[`${ek}_q${i}`]||"";
+        const correct=ua===p.answer;
+        const parts=p.sentence.split("______");
+        sentEl.appendChild(document.createTextNode(parts[0]));
+        const span=document.createElement("span");
+        span.className="blank-answer "+(correct?"correct":"wrong");
+        span.textContent=ua||"—";
+        sentEl.appendChild(span);
+        if(parts[1])sentEl.appendChild(document.createTextNode(parts[1]));
+        itemEl.classList.add(correct?"correct":"wrong");
+        const fb=document.createElement("div");
+        fb.className="blank-feedback "+(correct?"correct":"wrong");
+        fb.textContent=correct?"✓ Correct!":"✗  Answer: \""+p.answer+"\"";
+        itemEl.appendChild(sentEl);itemEl.appendChild(fb);
+        card.appendChild(itemEl);
+        return;
+      }
+      itemEl.appendChild(sentEl);
+      card.appendChild(itemEl);
+    });
+
+    if(!isSubm){
+      const chk=document.createElement("button");
+      chk.className="check-btn";chk.id="check-btn";
+      chk.textContent="✓ Check My Answers";
+      chk.disabled=!allAnswered();
+      chk.onclick=submitFillBlank;
+      card.appendChild(chk);
+    }else if(score){
+      const sb=document.createElement("div");sb.className="score-box";
+      sb.innerHTML=`<div><div class="score-n">${score.score}/${score.total}</div><div class="score-sub">${ordinal(score.attempt)} attempt</div></div>`;
+      if(score.score<score.total){
+        const rb=document.createElement("button");rb.className="retry-btn";rb.textContent="🔄 Try Again";rb.onclick=retryFillBlank;
+        sb.appendChild(rb);
+      }
+      card.appendChild(sb);
+    }
+  }
+
+  // ── SHADOWING ──
+  if(ex.type==="shadowing"){
+    ex.lines.forEach(line=>{
+      const el=document.createElement("div");el.className="shadow-line";
+      el.innerHTML=`<div class="shadow-text">"${line.text}"</div><div class="shadow-note">🎯 ${line.note}</div>`;
+      const btns=document.createElement("div");btns.className="shadow-btns";
+      btns.appendChild(makeAudioBtn(line.text,0.9));
+      btns.appendChild(makeAudioBtn(line.text,0.6,"🐢 Slow",false,true));
+      el.appendChild(btns);
+      card.appendChild(el);
+    });
+    const tip=document.createElement("div");tip.className="shadow-tip";
+    tip.innerHTML=`<div class="shadow-tip-title">🏋️ 4-Step Shadowing Method</div><ol>
+      <li>Listen once all the way through — don't speak yet, just absorb.</li>
+      <li>Play again and whisper along simultaneously, matching rhythm and melody.</li>
+      <li>Play a third time and speak at full volume, matching the speaker exactly.</li>
+      <li>Record yourself. Compare to the audio. Identify where you differ.</li></ol>`;
+    card.appendChild(tip);
+    const allDiv=document.createElement("div");allDiv.className="shadow-all";
+    allDiv.appendChild(makeAudioBtn(ex.lines.map(l=>l.text).join(". "),0.9,"🔊 Play All Lines"));
+    allDiv.appendChild(makeAudioBtn(ex.lines.map(l=>l.text).join(". "),0.6,"🐢 Slow All",false,true));
+    card.appendChild(allDiv);
+  }
+
+  // ── DIALOGUE ──
+  if(ex.type==="dialogue"){
+    ex.lines.forEach(line=>{
+      const row=document.createElement("div");row.className="dialogue-line";
+      const tag=document.createElement("div");tag.className="speaker-tag";tag.style.background=col;tag.textContent=line.speaker;
+      const bub=document.createElement("div");bub.className="dialogue-bubble";
+      bub.innerHTML=`<div class="dialogue-text">"${line.text}"</div>`;
+      const dbtns=document.createElement("div");dbtns.className="dialogue-btns";
+      dbtns.appendChild(makeAudioBtn(line.text,0.9,"🔊 Listen",true));
+      dbtns.appendChild(makeAudioBtn(line.text,0.6,"🐢 Slow",true,true));
+      bub.appendChild(dbtns);
+      row.appendChild(tag);row.appendChild(bub);
+      card.appendChild(row);
+    });
+    const allDiv=document.createElement("div");allDiv.className="dialogue-all";
+    allDiv.appendChild(makeAudioBtn(ex.lines.map(l=>l.text).join(". "),0.9,"🔊 Play Full Dialogue"));
+    allDiv.appendChild(makeAudioBtn(ex.lines.map(l=>l.text).join(". "),0.6,"🐢 Slow",false,true));
+    card.appendChild(allDiv);
+    const chal=document.createElement("div");chal.className="dialogue-challenge";
+    chal.innerHTML="<b>🎙️ Challenge:</b> Read both roles aloud — take Speaker A then Speaker B without stopping. Record yourself and compare your thought groups and linking to the model audio.";
+    card.appendChild(chal);
+  }
+
+  cont.appendChild(card);
+  showScreen("exercises");
+}
+
+function makePill(text,colour){
+  const s=document.createElement("span");
+  s.className="pill";
+  s.textContent=text;
+  s.style.cssText=`color:${colour};border-color:${colour}50;background:${colour}20`;
+  return s;
+}
+
+function allAnswered(){
+  if(!selectedTopic)return false;
+  const ex=selectedTopic.exercises[currentExIdx];
+  if(ex.type!=="fill-blank")return true;
+  const ek=exKey(selectedTopic.id,currentExIdx);
+  return ex.pairs.every((_,i)=>!!answers[`${ek}_q${i}`]);
+}
+function updateCheckBtn(){
+  const cb=document.getElementById("check-btn");
+  if(!cb)return;
+  cb.disabled=!allAnswered();
+  const nextBtn=document.getElementById("next-ex-btn");
+  const ex=selectedTopic.exercises[currentExIdx];
+  if(ex.type==="fill-blank"&&!submitted[exKey(selectedTopic.id,currentExIdx)]){
+    nextBtn.disabled=true;nextBtn.style.background="#e2e8f0";nextBtn.style.color="var(--muted)";
+  }
+}
+
+function submitFillBlank(){
+  const ek=exKey(selectedTopic.id,currentExIdx);
+  if(submitted[ek])return;
+  const ex=selectedTopic.exercises[currentExIdx];
+  const pairs=ex.pairs.map((p,i)=>({sentence:p.sentence,answer:p.answer,userAnswer:answers[`${ek}_q${i}`]||"",correct:(answers[`${ek}_q${i}`]||"")===p.answer}));
+  const sc=pairs.filter(p=>p.correct).length;
+  const prev=attemptCounts[ek]||0;const att=prev+1;
+  attemptCounts[ek]=att;
+  submitted[ek]=true;
+  exScores[ek]={score:sc,total:pairs.length,attempt:att,pairs};
+  allResults=allResults.filter(r=>!(r.key===ek&&r.attempt===att));
+  allResults.push({key:ek,topicId:selectedTopic.id,exerciseIdx:currentExIdx,score:sc,total:pairs.length,attempt:att,pairs});
+  renderExercises();
+}
+
+function retryFillBlank(){
+  const ek=exKey(selectedTopic.id,currentExIdx);
+  delete submitted[ek];
+  const ex=selectedTopic.exercises[currentExIdx];
+  ex.pairs.forEach((_,i)=>delete answers[`${ek}_q${i}`]);
+  renderExercises();
+}
+
+function prevExercise(){if(currentExIdx>0){currentExIdx--;renderExercises()}}
+function nextExercise(){
+  if(currentExIdx<selectedTopic.exercises.length-1){currentExIdx++;renderExercises()}
+  else renderResult();
+}
+
+/* ═══════════════════════════════════════════════════════
+   RESULT SCREEN
+═══════════════════════════════════════════════════════ */
+function renderResult(){
+  currentStep="result";
+  updateHeader("All Topics","Session Complete","",false);
+  const col=lvColour();
+  const topicRes=allResults.filter(r=>r.topicId===selectedTopic.id);
+  const ts=topicRes.reduce((a,r)=>a+r.score,0);
+  const tt=topicRes.reduce((a,r)=>a+r.total,0);
+  const pct=tt>0?Math.round(ts/tt*100):0;
+  const medal=pct>=85?"🏆":pct>=65?"🥈":pct>=50?"🥉":"💪";
+  const firstName=userName?userName.split(" ")[0]:"";
+
+  const cont=document.getElementById("result-content");
+  cont.innerHTML=`
+    <div class="result-hero" style="background:linear-gradient(135deg,var(--navy),${col})">
+      <div class="result-medal">${medal}</div>
+      <div class="result-name">${firstName?"Well done, "+firstName+"!":"Session Complete!"}</div>
+      <div class="result-topic">${selectedTopic.icon} ${selectedTopic.title}</div>
+      ${tt>0?`
+        <div class="result-pct">${pct}%</div>
+        <div class="result-sub">${ts} of ${tt} correct on fill-in-the-blank exercises</div>
+        <div class="result-bar-track"><div class="result-bar-fill" style="width:${pct}%"></div></div>
+      `:""}
+    </div>
+    <div id="results-detail"></div>
+    <div class="recap-card">
+      <div class="recap-title">📋 Rule Recap: ${selectedTopic.rule.title}</div>
+      <div class="recap-body">${selectedTopic.rule.body}</div>
+    </div>
+    <div class="result-actions">
+      <button class="btn-outline" style="flex:1" onclick="redoTopic()">🔄 Redo This Topic</button>
+      <button class="btn-primary" style="flex:1;background:linear-gradient(90deg,var(--navy),${col});border:none;border-radius:10px;color:#fff;font-size:14px" onclick="renderHome()">🏠 Choose Another Topic</button>
+    </div>
+    <button class="btn-primary" style="width:100%;margin-top:0" id="result-pdf-btn" onclick="exportPDF(selectedTopic,selectedLevel)">📄 Export This Session as PDF</button>
+    <div id="result-pdf-msg" class="pdf-msg" style="color:var(--green)"></div>
+  `;
+
+  const detail=document.getElementById("results-detail");
+  topicRes.filter(r=>r.pairs).forEach(r=>{
+    const d=document.createElement("div");d.className="result-detail";
+    const hd=document.createElement("div");hd.className="result-detail-hd";
+    hd.innerHTML=`<b style="color:var(--navy);font-size:14px">Fill-in-the-Blank — Exercise ${r.exerciseIdx+1}</b>`;
+    const pills=document.createElement("div");pills.style.cssText="display:flex;gap:6px";
+    pills.appendChild(makePill(ordinal(r.attempt)+" attempt",col));
+    pills.appendChild(makePill(`${r.score}/${r.total}`,r.score===r.total?"#16A34A":"#F59E0B"));
+    hd.appendChild(pills);d.appendChild(hd);
+    r.pairs.forEach(p=>{
+      const row=document.createElement("div");row.className="result-pair";
+      row.innerHTML=`<span class="result-pair-icon">${p.correct?"✅":"❌"}</span>
+        <div style="flex:1;min-width:0">
+          <div class="result-pair-sent">${p.sentence.replace("______",`[${p.answer}]`)}</div>
+          ${!p.correct?`<div class="result-pair-err">Your answer: "${p.userAnswer||"—"}" → Correct: "<b>${p.answer}</b>"</div>`:""}
+        </div>`;
+      d.appendChild(row);
+    });
+    detail.appendChild(d);
+  });
+
+  showScreen("result");
+}
+
+function redoTopic(){
+  const t=selectedTopic,l=selectedLevel;
+  submitted={};answers={};
+  startTopic(l,t);
+}
+
+/* ═══════════════════════════════════════════════════════
+   PDF EXPORT
+═══════════════════════════════════════════════════════ */
+let pdfLoading=false;
+async function exportPDF(topic,levelId){
+  if(pdfLoading)return;
+  const t=topic||selectedTopic;
+  const l=levelId||selectedLevel;
+  if(!t){alert("Please complete a topic first.");return}
+  pdfLoading=true;
+  const msgEl=document.getElementById("result-pdf-msg")||document.getElementById("global-pdf-msg");
+  const btnEl=document.getElementById("result-pdf-btn")||document.getElementById("global-pdf-btn");
+  if(btnEl)btnEl.textContent="⏳ Generating Report...";
+
+  const topicRes=allResults.filter(r=>r.topicId===t.id);
+  const ts=topicRes.reduce((a,r)=>a+r.score,0);
+  const tt=topicRes.reduce((a,r)=>a+r.total,0);
+  const pct=tt>0?Math.round(ts/tt*100):0;
+  const lvLabel=(LEVELS.find(lv=>lv.id===l)||{label:l}).label;
+  const summary=topicRes.map(r=>
+    `Ex ${r.exerciseIdx+1} (${ordinal(r.attempt)} attempt): ${r.score}/${r.total}\n`+
+    (r.pairs||[]).map(p=>`  • "${p.sentence}" → "${p.userAnswer}" [${p.correct?"✓":"✗ correct: "+p.answer}]`).join("\n")
+  ).join("\n\n")||"No fill-in-the-blank exercises completed.";
+
+  const prompt=`Generate a professional Huong Stella Paradigm-branded HTML report for printing as PDF.
+
+Student: ${userName||"—"}
+Email: ${userEmail||"—"}
+Level: ${lvLabel}
+Topic: ${t.title}
+Date: ${new Date().toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"})}
+Score: ${ts}/${tt} (${pct}%)
+
+Detailed Results:
+${summary}
+
+Pronunciation Rule Covered: ${t.rule.title}
+Rule Summary: ${t.rule.body.substring(0,300)}
+
+Requirements:
+- Complete standalone HTML, all CSS inline, use system sans-serif fonts only
+- Brand: Huong Stella Paradigm — navy #003087, cyan #00AEEF, clean white background
+- Professional header: "Huong Stella Paradigm — Pronunciation Trainer" + student name + email
+- Score displayed as a percentage with a visual CSS progress bar
+- Results table: columns = Question | Your Answer | Correct Answer | Result — colour-code rows (green #d1fae5 for correct, red #fee2e2 for incorrect)
+- Attempt numbers shown clearly (1st attempt, 2nd attempt etc.)
+- "Pronunciation Coaching Notes" section: 3 specific, actionable tips based on the errors made
+- "Recommended Daily Practice" section: 3 concrete exercises for the specific rule covered
+- Footer: "Huong Stella Paradigm Pronunciation Trainer — ${new Date().toLocaleDateString("en-GB")}"
+- @media print CSS: clean page breaks, no cut-off tables
+- Return ONLY raw HTML. No markdown, no code fences, no explanation.`;
+
+  try{
+    const res=await fetch("https://api.anthropic.com/v1/messages",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:3000,messages:[{role:"user",content:prompt}]})
+    });
+    const data=await res.json();
+    const html=(data.content||[]).find(b=>b.type==="text")?.text||"";
+    if(!html)throw new Error("Empty API response");
+    const win=window.open("","_blank");
+    win.document.write(html);win.document.close();
+    setTimeout(()=>{win.focus();win.print()},900);
+    if(msgEl)msgEl.textContent="✅ Report opened in a new tab. Use Print → Save as PDF.";
+  }catch(e){
+    if(msgEl)msgEl.textContent="⚠️ Could not generate report: "+e.message;
+  }
+  pdfLoading=false;
+  if(btnEl)btnEl.textContent=topic?"📄 Export This Session as PDF":"📄 Export Full Session Report (PDF)";
+}
+
+/* ═══════════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════════ */
+renderHome();
+</script>
+</body>
+</html>
